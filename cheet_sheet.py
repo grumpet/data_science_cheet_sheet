@@ -50,6 +50,41 @@ df['Price'].quantile(0.25)  # 25th percentile of price
 df['Price'].quantile(0.75)  # 75th percentile of price
 above_50 = df[df['Price']>50]  #saves only the rows where the price is above 50
 above_50_and_category_Electrical = df[(df['Price']>50) & (df['Category']=='Electrical')]  #saves only the rows where the price is above 50 and the category is Electrical
+df.isnull().sum()  # Check for missing values
+df=df.dropna()  # Drop missing values
+
+
+
+#for normalizing the data and visualizing the distribution
+plt.figure(figsize=(10, 6))  # Set the figure size
+plt.hist(df['Price'], bins=20)  # Histogram of Price
+plt.xlabel('Price')  # X-axis label
+plt.ylabel('Frequency')  # Y-axis label
+plt.title('Price Distribution')  # Title of the plot
+plt.show()
+
+
+#bar chart boolean values
+above_50 = df['Price']>50
+above_50 = above_50.value_counts()
+plt.bar(above_50.index.map({True: 'Above 50', False: 'Below 50'}), above_50.values)
+plt.show()
+
+#bar chart using seaborn
+#takes all the unique values in the category column and counts the frequency of each value
+sns.countplot(x='Category', data=df)
+plt.show()
+
+#scatter plot visualizing the relationship between two numerical columns
+
+plt.scatter(df['Price'], df['Quantity'])
+plt.xlabel('Price')
+plt.ylabel('Quantity')
+plt.title('Price vs Quantity')
+plt.show()
+
+
+
 
 # print(data.isnull().sum())  # check for missing values
 # data = data.dropna()  # drop missing values
