@@ -4,6 +4,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
+# Function to remove outliers using the IQR method
+def remove_outliers(df):
+    Q1 = df.quantile(0.25)
+    Q3 = df.quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    return df[~((df < lower_bound) | (df > upper_bound)).any(axis=1)]
+
 df = pd.read_csv('clubmed_HW2.csv') # Load the dataset
 print(df.isnull().sum())  # Check for missing values
 df.info()  # Summary of the DataFrame
@@ -11,7 +20,6 @@ df.info()  # Summary of the DataFrame
 # room_price numerical value -> 3 missing values
 # visits2016 numerical value -> 30 missing values
 # club_member categorical value -> [False True nan] has 7 missing values
-
 
 #df = df.dropna()# Drop rows with missing values
 df = df.dropna(thresh=2)  # Drop rows with at least 2 missing values
@@ -31,6 +39,7 @@ df['room_price'] = df['room_price'].fillna(df['room_price'].mean())  # Fill miss
 #interpolation -> time series data
 
 
+
 #discretization -> converting continuous data into discrete data by creating bins or categories
 #to use when we want to convert a continuous variable into a categorical one
 df['room_price_bins'] = pd.cut(df['room_price'], bins=3, labels=['low', 'medium', 'high'])  # Discretize the room_price column into 3 bins
@@ -45,3 +54,47 @@ cross_tab = pd.crosstab(df['status'], df['club_member'],normalize='index' , marg
 #margin=True -> add row and column totals
 cross_tab.plot(kind='bar', stacked=True)  # Create a stacked bar plot
 plt.show()
+
+import scipy.stats as stats
+
+#df['agez']=stats.zscore(df['age']) #standardize the age column
+
+df_numeric = df.select_dtypes(include='number')  # Select numerical columns only
+
+
+df_numeric = remove_outliers(df_numeric)  # Remove outliers from the standardized numerical columns
+
+df_numeric.hist(bins=50, figsize=(20, 15))# Generate a histogram for each numerical column
+plt.show()
+
+
+
+df_numeric = df_numeric.apply(stats.zscore)  # Standardize the numerical columns
+df_numeric.hist(bins=50, figsize=(20, 15))# Generate a histogram for each numerical column
+plt.show()
+
+
+#log transformation is used for data that is skewed
+#check for skewness in a histogram
+plt.hist(df_numeric['nights'], bins=20)  # Histogram of room_price
+plt.show()
+df_numeric['log_nights'] = np.log10(df_numeric['nights'])  # Log transformation of room_price
+
+df_numeric.boxplot(figsize=(20, 15))# Generate a boxplot for each numerical column
+plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+plt.show()
+
+
+
+
+
+#copy the numerical columns back to the original DataFrame
+for column in df_numeric.columns:
+    df[column] = df_numeric[column]
+    
+    
+
+
+
+
+

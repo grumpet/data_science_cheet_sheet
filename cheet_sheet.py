@@ -62,6 +62,8 @@ outliers = df[(df['Price'] < lower_bound) | (df['Price'] > upper_bound)]  #saves
 df = df[(df['Price'] > lower_bound) & (df['Price'] < upper_bound)]#removing the outliers
 
 
+#normelized(x) = (x-mean)/std(x)
+
 
 
 
